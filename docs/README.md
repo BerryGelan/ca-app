@@ -4,19 +4,19 @@
 
 ## Components
 ### Metadata
-| Volumes     ||
+| Volumes     | Description                                                                                  |
 | :---        | :---                                                                                         |
 | `v-src-cam` | shared docker volume **/ca-src** between CAsrc and CAmon. Contains **/in** and **/out**      |
 | `v-cam-cas` | shared docker volume **/ca-cas** between CAmon and CAsrv. Contains **studyDate** directories |
 | `v-cae-cad` | shared docker volume **/ca-cad** between CAetl and CAdb and CAsrv. Contains **/desc**        |
 
-| Networks    ||
-| :---        | :---                                          |
-| `n-src-cam` | shared docker network between CAsrc and CAmon |
-| `n-cam-cas` | shared docker network between CAmon and CAsrv |
-| `n-cas-cae` | shared docker network between CAsrv and CAetl |
-| `n-cae-cad` | shared docker network between CAetl and CAdb  |
-| `n-cas-cau` | shared docker network between CAsrv and CAui  |
+| Networks    | Components      |
+| :---        | :---            |
+| `n-src-cam` | CAsrc and CAmon |
+| `n-cam-cas` | CAmon and CAsrv |
+| `n-cas-cae` | CAsrv and CAetl |
+| `n-cae-cad` | CAetl and CAdb  |
+| `n-cas-cau` | CAsrv and CAui  |
 
 | Users   | Component | Volume Access               | Actions                                                                                          |
 | :---    | :---      | :---                        | :---                                                                                             |
