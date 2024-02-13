@@ -25,3 +25,13 @@
 | `u-cas` | CAsrv user | Have access to `v-cam-cas` and `v-cae-cad` | Can access data file descriptions **/desc**                                                      |
 | `u-cae` | CAetl user | Have access to `v-cae-cad`                 | Can do actions in CAdb **data-file-etl** database and create data file descriptions in **/desc** |
 | `u-cad` | CAdb user  | Have access to `v-cae-cad`                 | Can read CAdb **data-file-etl** database and notify data file etl pre-processing is done         |
+
+### CAsrc
+Uses: cron, data-manager.sh
+
+v-src-cam, n-src-cam, u-src
+- creates data files and saves to v-src-cam/in
+- changes data files permissions, ownership for u-cam
+- moves data files to v-src-cam/out
+
+(repeats process every 5* minutes - configurable)
