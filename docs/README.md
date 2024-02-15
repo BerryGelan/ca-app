@@ -1,6 +1,6 @@
 # ca-app
 
-![App Architecture](./img/architecture.png?raw=true "App Architecture")
+![App Architecture](./img/architecture.jpg?raw=true "App Architecture")
 
 ## Components
 ### Metadata
