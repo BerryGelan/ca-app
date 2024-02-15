@@ -1,5 +1,7 @@
 # ca-app
 
+FastAPI app example
+
 ![App Architecture](./img/architecture.jpg?raw=true "App Architecture")
 
 ## Components
