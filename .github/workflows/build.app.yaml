@@ -1,7 +1,12 @@
 name: build-app
 
+on:
+  workflow_run:
+    workflows: [Build App]
+    types: [requested]
+
 jobs:
-  runs-on: ['ubuntu-latest']
+  runs-on: 'ubuntu-latest'
   steps:
     pre:
       name: Variables
