@@ -1,9 +1,10 @@
 name: Build
 
 on:
-  workflow_dispatch:
-    workflows: [Build App]
-    types: [requested]
+  workflow_run:
+    workflows: ['Main']
+    types:
+      - in_progress
 
 jobs:
   _pre:
@@ -16,7 +17,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Variables
         run: |
-          gh variable set -f dev.env
+          gh variable set -f ${{ inputs.dot-env }}
+          gh variable list
           env
 
   # build:

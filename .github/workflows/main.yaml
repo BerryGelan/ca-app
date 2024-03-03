@@ -46,8 +46,11 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       GH_WORKFLOW_BUILD: build.yaml
-
     steps:
+    #   - uses: actions/checkout@v3
+    #   - uses: ./.github/workflows/build.yaml
+    #     with:
+    #       dot-env: .github/variables/dev.env
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
