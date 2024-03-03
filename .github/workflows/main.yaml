@@ -47,7 +47,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/workflows/build.yaml
+      - uses: BerryGelan/ca-app/.github/workflows/build.yaml
 
     # runs-on: ubuntu-latest
     # env:
