@@ -1,0 +1,56 @@
+name: ca-pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: false
+        descrption: Release Version
+        type: string
+      target-env:
+        required: false
+        description: Release Environment
+        type: choice
+        default: 'github'
+        options:
+        - github
+        - dev
+        - stage
+        - prod
+      skip-tests:
+        required: false
+        description: Skip Tests
+        type: boolean
+        default: 'false'
+      skip-infra:
+        required: false
+        description: Skip Infrastructure
+        type: boolean
+        default: 'false'
+      skip-scan:
+        required: false
+        description: Skip Scanning
+        type: boolean
+        default: 'false'
+      new-cache:
+        required: false
+        description: Re-build cache
+        type: boolean
+        default: 'false'
+
+jobs:
+  # app_cache:
+  # cloud_cache:
+  build_app:
+    name: Build App
+    runs-on: ubuntu-latest
+    env:
+      WORKFLOW_BUILD_APP: ./build.app.yaml
+
+    steps:
+      - if: ${{ github.events.inputs.target-env == 'github' || github.events.inputs.target-env == 'dev' }}
+        # needs: [ app_cache ]
+        run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
+
+  # deploy_dev:
+  # draft_release:

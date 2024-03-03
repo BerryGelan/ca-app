@@ -1,0 +1,20 @@
+name: build-app
+
+on:
+  workflow_run:
+    workflows: [Build App]
+    types: [requested]
+
+jobs:
+  .pre:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Variables
+        run: |
+          gh variable set -f dev.env
+          env
+
+  # build:
+  # test:
+  # scan:
+  # save_scan:
