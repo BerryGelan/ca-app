@@ -39,8 +39,11 @@ on:
         default: "false"
 
 jobs:
+  runs-on: ['ubuntu-latest']
   environment:
     WORKFLOW_BUILD_APP: ./build.app.yaml
+
+  steps:
 
     # app_cache:
     # cloud_cache:
@@ -48,7 +51,6 @@ jobs:
     build_app:
     # needs: [ app_cache ]
       if: ${{ github.events.inputs.target-env == 'github' || github.events.inputs.target-env == 'dev' }}
-      runs-on: ['ubuntu-latest']
       run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
 
     # deploy_dev:

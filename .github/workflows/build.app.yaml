@@ -1,12 +1,13 @@
 name: build-app
 
 jobs:
-  pre:
-    name: Variables
-    runs-on: ['ubuntu-latest']
-    run: |
-      gh variable set -f dev.env
-      env
+  runs-on: ['ubuntu-latest']
+  steps:
+    pre:
+      name: Variables
+      run: |
+        gh variable set -f dev.env
+        env
 
   # build:
   # test:
