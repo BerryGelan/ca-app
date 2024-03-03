@@ -1,11 +1,10 @@
 name: Build
 
 on:
-  workflow_call:
-    inputs:
-      dot-env:
-        required: true
-        type: string
+  workflow_run:
+    workflows: ['Main']
+    types:
+      - in_progress
 
 jobs:
   _pre:
