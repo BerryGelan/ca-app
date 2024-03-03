@@ -59,7 +59,8 @@ jobs:
     needs: [_pre]
     env:
       GH_TOKEN: ${{ github.token }}
-      WORKFLOW_BUILD: build.yaml
+      GH_WORKFLOW_BRANCH: ${ GITHUB_REF##*/ }
+      GH_WORKFLOW_BUILD: build.yaml
 
     steps:
       - name: Checkout
@@ -67,7 +68,7 @@ jobs:
       - name: Build
         if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
         # needs: [ app_cache ]
-        run: gh workflow run ${{ env.WORKFLOW_BUILD }}
+        run: gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ env.GH_WORKFLOW_BRANCH }}
 
   # deploy_dev:
   # draft_release:
