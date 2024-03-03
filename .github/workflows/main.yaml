@@ -59,7 +59,7 @@ jobs:
     #     # needs: [ app_cache ]
     #     run: |
     #       gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
-        uses: ./.github/workflows/callable_workflow.yml
+      - uses: ./.github/workflows/callable_workflow.yml
         with:
           name: 'Jimin'
 
