@@ -46,23 +46,22 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/workflows/build.yaml
-        with:
-          dot-env: .github/variables/dev.env
-
-    # runs-on: ubuntu-latest
-    # env:
-    #   GH_TOKEN: ${{ github.token }}
-    #   GH_WORKFLOW_BUILD: build.yaml
-    # steps:
-    #   - name: Checkout
-    #     uses: actions/checkout@v3
-    #   - name: Build
-    #     if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
-    #     # needs: [ app_cache ]
-    #     run: |
-    #       gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
+    #   - uses: actions/checkout@v3
+    #   - uses: ./.github/workflows/build.yaml
+    #     with:
+    #       dot-env: .github/variables/dev.env
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_WORKFLOW_BUILD: build.yaml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
+        # needs: [ app_cache ]
+        run: |
+          gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
 
   # deploy_dev:
   # draft_release:
