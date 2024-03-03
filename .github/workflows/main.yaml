@@ -62,7 +62,10 @@ jobs:
       WORKFLOW_BUILD_APP: ./build.app.yaml
 
     steps:
-      - if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
         # needs: [ app_cache ]
         run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
 
