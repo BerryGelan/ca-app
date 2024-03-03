@@ -45,19 +45,24 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
-      GH_WORKFLOW_BUILD: build.yaml
+    #   GH_WORKFLOW_BUILD: build.yaml
     steps:
     #   - uses: actions/checkout@v3
     #   - uses: ./.github/workflows/build.yaml
     #     with:
     #       dot-env: .github/variables/dev.env
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Build
-        if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
-        # needs: [ app_cache ]
-        run: |
-          gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
+
+    #   - name: Checkout
+    #     uses: actions/checkout@v3
+    #   - name: Build
+    #     if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
+    #     # needs: [ app_cache ]
+    #     run: |
+    #       gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
+      - useCallable:
+        uses: ./.github/workflows/callable_workflow.yml
+        with:
+          name: 'Jimin'
 
   # deploy_dev:
   # draft_release:
