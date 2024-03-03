@@ -1,4 +1,4 @@
-name: ca-pipeline
+name: Main
 
 on:
   workflow_dispatch:
@@ -41,6 +41,18 @@ on:
 jobs:
   # app_cache:
   # cloud_cache:
+  .pre:
+    name: Variables
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo VERSION ${{ github.events.inputs.version }}
+          echo TARGET_ENV ${{ github.events.inputs.target-env }}
+          echo SKIP_TESTS ${{ github.events.inputs.skip-tests }}
+          echo SKIP_INFRA ${{ github.events.inputs.skip-infra }}
+          echo SKIP_SCAN ${{ github.events.inputs.skip-scan }}
+          echo NEW_CACHE ${{ github.events.inputs.new-cache }}
+
   build_app:
     name: Build App
     runs-on: ubuntu-latest
