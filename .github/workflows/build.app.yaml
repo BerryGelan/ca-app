@@ -6,7 +6,7 @@ on:
     types: [requested]
 
 jobs:
-  .pre:
+  _pre:
     runs-on: ubuntu-latest
     steps:
       - name: Variables

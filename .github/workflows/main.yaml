@@ -46,12 +46,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo VERSION ${{ github.events.inputs.version }}
-          echo TARGET_ENV ${{ github.events.inputs.target-env }}
-          echo SKIP_TESTS ${{ github.events.inputs.skip-tests }}
-          echo SKIP_INFRA ${{ github.events.inputs.skip-infra }}
-          echo SKIP_SCAN ${{ github.events.inputs.skip-scan }}
-          echo NEW_CACHE ${{ github.events.inputs.new-cache }}
+          echo VERSION ${{ github.event.inputs.version }}
+          echo TARGET_ENV ${{ github.event.inputs.target-env }}
+          echo SKIP_TESTS ${{ github.event.inputs.skip-tests }}
+          echo SKIP_INFRA ${{ github.event.inputs.skip-infra }}
+          echo SKIP_SCAN ${{ github.event.inputs.skip-scan }}
+          echo NEW_CACHE ${{ github.event.inputs.new-cache }}
 
   build_app:
     name: Build App
@@ -61,7 +61,7 @@ jobs:
       WORKFLOW_BUILD_APP: ./build.app.yaml
 
     steps:
-      - if: ${{ github.events.inputs.target-env == 'github' || github.events.inputs.target-env == 'dev' }}
+      - if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
         # needs: [ app_cache ]
         run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
 
