@@ -43,6 +43,9 @@ jobs:
   build_app:
     name: Build App
     runs-on: ubuntu-latest
+    runs:
+      using: 'node20'
+      main: 'main.js'
     env:
       GH_TOKEN: ${{ github.token }}
       GH_WORKFLOW_BUILD: build.yaml
