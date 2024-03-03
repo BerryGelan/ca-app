@@ -32,40 +32,183 @@ on:
         description: Skip Scanning
         type: boolean
         default: 'false'
-      new-cache:
-        required: false
-        description: Re-build cache
-        type: boolean
-        default: 'false'
+
+env:
+  AZ_CACHE_NAME: 'az'
+  AZ_CACHE_PATH: ~/.cache/az
+  PY_CACHE_NAME: 'pip'
+  PY_CACHE_PATH: ~/.cache/pip
+  PY_VERSION: '3.9'
+  PY_ARCHITECTURE: 'x64'
+  PY_REQUIREMENTS: ./github/requirements.txt
+
 
 jobs:
-  # app_cache
-  build_app:
-    name: Build App
+
+  # 1.1 - Holds Azure CLI, k8s, etc.
+  az_cache:
+    name: Azure Cache
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
-    #   GH_WORKFLOW_BUILD: build.yaml
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: ./.github/workflows/callable_workflow.yml
+
+      - name: Build Azure Cache
+        uses: actions/cache@v4.0.0
+        id: az-cache
         with:
-          name: 'Jimin'
-    #   - uses: actions/checkout@v3
-    #   - uses: ./.github/workflows/build.yaml
-    #     with:
-    #       dot-env: .github/variables/dev.env
+          path: ${{ AZ_CACHE_NAME }}
+          key: ${{ runner.os }}-${{ AZ_CACHE_NAME }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ AZ_CACHE_NAME }}-
 
-    #   - name: Checkout
-    #     uses: actions/checkout@v3
-    #   - name: Build
-    #     if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
-    #     # needs: [ app_cache ]
-    #     run: |
-    #       gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
-      
+      - if: steps.az-cache.outputs.cache-hit == false
+        name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: az --version
 
-  # deploy_dev:
-  # draft_release:
+      # https://azure.github.io/actions/
+      #- uses: azure/setup-kubectl@v3
+      #  with:
+      #    version: ${{ env.K8_VERSION }}
+      #  id: install
+
+  # 1.2 - Holds Python and requirements.txt dependencies
+  py_cache:
+    name: Python Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Python Cache
+        uses: actions/cache@v4.0.0
+        id: py-cache
+        with:
+          path: ${{ PY_CACHE_PATH }}
+          key: ${{ runner.os }}-${{ PY_CACHE_NAME }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ PY_CACHE_NAME }}-
+
+      - if: steps.py-cache.outputs.cache-hit == false
+        name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ PY_VERSION }}
+          architecture: ${{ PY_ARCHITECTURE }}
+          cache: ${{ PY_CACHE_NAME }}
+
+      - if: steps.py-cache.outputs.cache-hit == false
+        name: Python version
+        run: python --version
+
+      - if: steps.py-cache.outputs.cache-hit == false
+        name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{ PY_REQUIREMENTS }}
+
+      - if: steps.py-cache.outputs.cache-hit == false
+        name: List dependencies
+        run: pip list
+
+  # TODO: (spent 2h) continue to achieve reusable workflow with accepting input 'skip-tests'
+  # 2.1 - Builds & Tests App
+  py_build_test:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: py_cache
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Retrieve Python Cache
+        uses: actions/cache@v4.0.0
+        id: py-cache
+        with:
+          path: ${{ PY_CACHE_PATH }}
+          key: ${{ runner.os }}-${{ PY_CACHE_NAME }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ PY_CACHE_NAME }}-
+
+      - if: steps.py-cache.outputs.cache-hit == 'true'
+        name: Build App
+        run: python -m build
+
+      # https://github.com/pypa/gh-action-pypi-publish
+      - if: steps.py-cache.outputs.cache-hit == 'true'
+        name: Publish App Package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: custom-dir/
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          verify-metadata: false
+          skip-existing: true
+          # verbose: true
+
+      - if: steps.py-cache.outputs.cache-hit == 'true' || steps.py-cache-new.outputs.cache-hit == 'true' && github.event.inputs.skip-tests == 'false'
+        name: Test App
+        run: python --version  # do test app
+
+  # 2.2 - Perform scannings
+  py_scan:
+
+  # 3.1 - Create new App Docker Image & Store to artifactory
+  create_publish_img:
+
+  # https://azure.github.io/actions/
+  # 3.2 - Deploy App to Dev
+  py_deploy_dev:
+    name: Dev Deploy
+    runs-on: ubuntu-latest
+    needs: [ az_cache, py_build_test ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # https://learn.microsoft.com/en-us/azure/aks/kubernetes-action#create-actions-file
+      - name: Login
+        id: login
+        uses: azure/login@v1.4.3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy
+        # ...
+
+  # 3.3 - Create GitHub Draft Release
+  draft_release:
+    name: Draft Release
+    runs-on: ubuntu-latest
+    needs: py_deploy_dev
+
+  # 4.1 - Deploy App to Stage
+  py_deploy_stg:
+
+  # 4.2 - Perform Smoke Testing
+  py_smoke_test:
+
+  # 5.1 - Initialize Blue-Green Deployment
+  blue_green_init:
+
+  # 5.2 - Do Blue-Green Switch
+  blue_green_switch:
+
+  # 5.3 - Deploy App to Prod
+  py_deply_prod:
+
+  # 5.4 - Create GitHub Stable Release
+  stable_release:
+
+  # 6 - Send email/slack notification or do Jira actions w/e
+  notify:
