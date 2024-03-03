@@ -47,6 +47,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     #   GH_WORKFLOW_BUILD: build.yaml
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: ./.github/workflows/callable_workflow.yml
         with:
           name: 'Jimin'
