@@ -52,7 +52,7 @@ jobs:
           echo SKIP_INFRA ${{ github.event.inputs.skip-infra }}
           echo SKIP_SCAN ${{ github.event.inputs.skip-scan }}
           echo NEW_CACHE ${{ github.event.inputs.new-cache }}
-          echo BRANCH ${{ GITHUB_REF }}
+          echo BRANCH ${{ github.ref_name }}
 
   build_app:
     name: Build App
@@ -68,7 +68,7 @@ jobs:
       - name: Build
         if: github.event.inputs.target-env == 'github' || github.event.inputs.target-env == 'dev'
         # needs: [ app_cache ]
-        run: gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ GITHUB_REF }}
+        run: gh workflow run ${{ env.GH_WORKFLOW_BUILD }} --ref ${{ github.ref_name }}
 
   # deploy_dev:
   # draft_release:
