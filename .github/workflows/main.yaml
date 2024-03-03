@@ -42,8 +42,9 @@ jobs:
   # app_cache
   build_app:
     name: Build App
-    runs-on: ubuntu-latest
     runs:
+      on: ubuntu-latest
+      # https://github.blog/changelog/2023-09-22-github-actions-transitioning-from-node-16-to-node-20/
       using: 'node20'
       main: 'main.js'
     env:
