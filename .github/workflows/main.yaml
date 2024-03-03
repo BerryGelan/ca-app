@@ -11,35 +11,35 @@ on:
         required: false
         description: Release Environment
         type: choice
-        default: "github"
+        default: 'github'
         options:
-            - github
-            - dev
-            - stage
-            - prod
+        - github
+        - dev
+        - stage
+        - prod
       skip-tests:
         required: false
         description: Skip Tests
         type: boolean
-        default: "false"
+        default: 'false'
       skip-infra:
         required: false
         description: Skip Infrastructure
         type: boolean
-        default: "false"
+        default: 'false'
       skip-scan:
         required: false
         description: Skip Scanning
         type: boolean
-        default: "false"
+        default: 'false'
       new-cache:
         required: false
         description: Re-build cache
         type: boolean
-        default: "false"
+        default: 'false'
 
 jobs:
-  runs-on: 'ubuntu-latest'
+  runs-on: ubuntu-latest
   env:
     WORKFLOW_BUILD_APP: ./build.app.yaml
 
