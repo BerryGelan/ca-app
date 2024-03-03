@@ -1,9 +1,7 @@
 name: Build
 
 on:
-  workflow_dispatch:
-    workflows: [Build App]
-    types: [requested]
+  workflow_call:
 
 jobs:
   _pre:
@@ -17,6 +15,7 @@ jobs:
       - name: Variables
         run: |
           gh variable set -f dev.env
+          gh variable list
           env
 
   # build:
