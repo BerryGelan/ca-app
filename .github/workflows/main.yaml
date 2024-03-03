@@ -39,20 +39,18 @@ on:
         default: 'false'
 
 jobs:
-  runs-on: ubuntu-latest
-  env:
-    WORKFLOW_BUILD_APP: ./build.app.yaml
+  # app_cache:
+  # cloud_cache:
+  build_app:
+    name: Build App
+    runs-on: ubuntu-latest
+    env:
+      WORKFLOW_BUILD_APP: ./build.app.yaml
 
-  steps:
+    steps:
+      - if: ${{ github.events.inputs.target-env == 'github' || github.events.inputs.target-env == 'dev' }}
+        # needs: [ app_cache ]
+        run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
 
-    # app_cache:
-    # cloud_cache:
-
-    build_app:
-      name: Build App
-    # needs: [ app_cache ]
-      if: ${{ github.events.inputs.target-env == 'github' || github.events.inputs.target-env == 'dev' }}
-      run: gh workflow run ${{ env.WORKFLOW_BUILD_APP }}
-
-    # deploy_dev:
-    # draft_release:
+  # deploy_dev:
+  # draft_release:
