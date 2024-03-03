@@ -44,7 +44,7 @@ jobs:
     name: Build App
     env:
       GH_TOKEN: ${{ github.token }}
-    uses: .github/workflows/build.yaml
+    uses: ./.github/workflows/build.yaml
 
     # runs-on: ubuntu-latest
     # env:
